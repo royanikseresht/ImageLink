@@ -1,0 +1,24 @@
+import telebot
+
+# Replace <your_bot_token> with your bot token
+token = '*YOUR TELEGRAM BOT TOKEN*'
+bot = telebot.TeleBot(token)
+
+# Define the command handler
+@bot.message_handler(commands=['upload'])
+def handle_upload(message):
+    # Upload the photo to Telegram using the sendPhoto method
+    with open('example.jpg', 'rb') as photo:
+        response = bot.send_photo(message.chat.id, photo)
+    # Get the file ID of the uploaded photo from the response JSON
+    file_id = response.photo[-1].file_id
+    # Use the Telegram Bot API to get the file path
+    file_path = bot.get_file(file_id).file_path
+    # Construct the URL of the image
+    image_url = f'https://api.telegram.org/file/bot{token}/{file_path}'
+    print(image_url)
+    # Send the image URL to the user
+    bot.reply_to(message, image_url)
+
+
+bot.infinity_polling()
